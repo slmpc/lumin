@@ -1,6 +1,6 @@
 package com.github.slmpc.lumin;
 
-import net.minecraft.client.Minecraft;
+import com.github.slmpc.lumin.managers.Managers;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -22,9 +22,9 @@ public class Lumin {
 
     @SubscribeEvent
     static void onClientSetup(FMLClientSetupEvent event) {
-        // Some client setup code
-        Lumin.LOGGER.info("HELLO FROM CLIENT SETUP");
-        Lumin.LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+        Managers.initManagers();
+
+        Lumin.LOGGER.info("Lumin initialized");
     }
 
 }
