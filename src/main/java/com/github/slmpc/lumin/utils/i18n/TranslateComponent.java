@@ -11,4 +11,8 @@ public record TranslateComponent(
         return LUMIN_PREFIX + "." + prefix + "." + suffix;
     }
 
+    public String getFullKeyWithoutPrefix() {
+        return prefix + "." + suffix;
+    }
+
 }
