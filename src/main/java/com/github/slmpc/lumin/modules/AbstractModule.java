@@ -17,7 +17,7 @@ public abstract class AbstractModule {
     public int keyBind;
 
     private boolean enabled;
-    private ArrayList<AbstractSetting<?>> settings;
+    private final ArrayList<AbstractSetting<?>> settings = new ArrayList<>();
 
     public AbstractModule(String nameKey, Category category) {
         this.name = new TranslateComponent("modules", nameKey);
