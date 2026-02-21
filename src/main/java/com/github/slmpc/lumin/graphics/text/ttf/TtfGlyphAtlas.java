@@ -1,18 +1,18 @@
 package com.github.slmpc.lumin.graphics.text.ttf;
 
 import com.github.slmpc.lumin.graphics.LuminTexture;
-import com.github.slmpc.lumin.utils.resources.ResourceLocationUtils;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.textures.AddressMode;
+import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.textures.GpuTexture;
 import com.mojang.blaze3d.textures.TextureFormat;
-import net.minecraft.client.Minecraft;
-import net.minecraft.resources.Identifier;
+
+import java.util.OptionalDouble;
 
 public class TtfGlyphAtlas {
     private static final int SIZE = 512;
     private final LuminTexture texture;
-    public Identifier identifier;
 
     private int currentX = 1;
     private int currentY = 1;
@@ -29,14 +29,13 @@ public class TtfGlyphAtlas {
         );
 
         final var textureView = RenderSystem.getDevice().createTextureView(texture);
-
-        this.texture = new LuminTexture(texture, textureView);
-        this.identifier = ResourceLocationUtils.getIdentifier("textures/ttf_glyph_atlas_" + atlasId);
-
-        Minecraft.getInstance().getTextureManager().register(
-                this.identifier,
-                this.texture
+        final var sampler = RenderSystem.getDevice().createSampler(
+                AddressMode.CLAMP_TO_EDGE, AddressMode.CLAMP_TO_EDGE,
+                FilterMode.LINEAR, FilterMode.LINEAR,
+                1, OptionalDouble.empty()
         );
+
+        this.texture = new LuminTexture(texture, textureView, sampler);
     }
 
     /**

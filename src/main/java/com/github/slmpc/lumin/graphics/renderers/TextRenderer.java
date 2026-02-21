@@ -1,6 +1,6 @@
 package com.github.slmpc.lumin.graphics.renderers;
 
-
+import com.github.slmpc.lumin.graphics.LuminRenderSystem;
 import com.github.slmpc.lumin.graphics.text.ITextRenderer;
 import com.github.slmpc.lumin.graphics.text.ttf.TtfTextRenderer;
 
@@ -16,6 +16,8 @@ public class TextRenderer implements IRenderer {
 
     @Override
     public void draw() {
+        LuminRenderSystem.applyOrthoProjection();
+
         textRenderer.draw();
     }
 
