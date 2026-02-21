@@ -9,7 +9,7 @@ import java.util.List;
 public class ModuleManager {
 
     private static ModuleManager INSTANCE = null;
-    private List<AbstractModule> modules;
+    private List<AbstractModule> modules = new ArrayList<>();
 
     private ModuleManager() {
         initModules();
