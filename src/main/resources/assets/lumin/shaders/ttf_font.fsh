@@ -7,7 +7,6 @@ uniform sampler2D Sampler0;
 
 layout(std140) uniform TtfInfo {
     float EdgeThreshold;
-    float Smoothing;
 };
 
 layout(location = 0) out vec4 f_Color;

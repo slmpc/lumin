@@ -65,7 +65,6 @@ public class TtfTextRenderer implements ITextRenderer {
         if (ttfInfoUniformBuf == null) {
             final var size = new Std140SizeCalculator()
                     .putFloat()
-                    .putFloat()
                     .get();
 
             ttfInfoUniformBuf = RenderSystem.getDevice().createBuffer(
@@ -80,8 +79,7 @@ public class TtfTextRenderer implements ITextRenderer {
                     .mapBuffer(ttfInfoUniformBuf, false, true)
             ) {
                 Std140Builder.intoBuffer(mappedView.data())
-                        .putFloat(0.5f)
-                        .putFloat(0.04f);
+                        .putFloat(0.5f);
             }
         }
 
@@ -89,10 +87,9 @@ public class TtfTextRenderer implements ITextRenderer {
             TtfGlyphAtlas atlas = entry.getKey();
             BufferBuilder buffer = entry.getValue();
 
-            final var meshData = buffer.build();
-
-            try (meshData) {
+            try (final var meshData = buffer.build()) {
                 if (meshData == null) continue;
+
                 GpuBufferSlice dynamicUniforms = RenderSystem.getDynamicUniforms().writeTransform(
                         RenderSystem.getModelViewMatrix(),
                         new Vector4f(1, 1, 1, 1),
@@ -100,17 +97,20 @@ public class TtfTextRenderer implements ITextRenderer {
                         TextureTransform.DEFAULT_TEXTURING.getMatrix()
                 );
 
-                GpuBuffer vbo = DefaultVertexFormat.POSITION_TEX_COLOR.uploadImmediateVertexBuffer(meshData.vertexBuffer());
-                RenderSystem.AutoStorageIndexBuffer autoIndices = RenderSystem.getSequentialBuffer(VertexFormat.Mode.QUADS);
+                GpuBuffer vbo = DefaultVertexFormat.POSITION_TEX_COLOR
+                        .uploadImmediateVertexBuffer(meshData.vertexBuffer());
+                RenderSystem.AutoStorageIndexBuffer autoIndices =
+                        RenderSystem.getSequentialBuffer(VertexFormat.Mode.QUADS);
                 GpuBuffer ibo = autoIndices.getBuffer(meshData.drawState().indexCount());
 
                 RenderTarget target = Minecraft.getInstance().getMainRenderTarget();
+                if (target.getColorTextureView() == null) return;
 
-                assert target.getColorTextureView() != null;
                 try (RenderPass pass = RenderSystem.getDevice().createCommandEncoder().createRenderPass(
                         () -> "Lumin TTF Draw",
                         target.getColorTextureView(), OptionalInt.empty(),
-                        target.getDepthTextureView(), OptionalDouble.empty())) {
+                        target.getDepthTextureView(), OptionalDouble.empty())
+                ) {
 
                     pass.setPipeline(LuminRenderPipelines.TTF_FONT);
 
