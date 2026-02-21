@@ -1,6 +1,7 @@
 package com.github.slmpc.lumin.modules.impl.visual;
 
 import com.github.slmpc.lumin.graphics.renderers.RectRenderer;
+import com.github.slmpc.lumin.graphics.renderers.TextRenderer;
 import com.github.slmpc.lumin.modules.AbstractModule;
 import com.github.slmpc.lumin.modules.Category;
 import com.github.slmpc.lumin.settings.impl.IntSetting;
@@ -26,6 +27,7 @@ public class RenderTest extends AbstractModule {
     }
 
     private final RectRenderer rectRenderer = new RectRenderer();
+    private final TextRenderer textRenderer = new TextRenderer();
 
     private final IntSetting rectX = intSetting("rect_x", 10, 0, 100, 5);
     private final IntSetting rectY = intSetting("rect_y", 10, 0, 100, 5);
@@ -34,6 +36,9 @@ public class RenderTest extends AbstractModule {
     public void onRenderGui(RenderGuiEvent.Post event) {
         rectRenderer.addRect(rectX.getValue(), rectY.getValue(), 200, 200, Color.WHITE);
         rectRenderer.drawAndClear();
+
+        textRenderer.addText("hello", 10.0f, 10.0f, Color.BLACK, 1.0f);
+        textRenderer.drawAndClear();
     }
 
 }

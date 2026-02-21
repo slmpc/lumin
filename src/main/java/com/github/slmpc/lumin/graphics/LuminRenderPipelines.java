@@ -3,6 +3,7 @@ package com.github.slmpc.lumin.graphics;
 import com.github.slmpc.lumin.utils.resources.ResourceLocationUtils;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.platform.DepthTestFunction;
+import com.mojang.blaze3d.shaders.UniformType;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -16,6 +17,19 @@ public class LuminRenderPipelines {
             .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS)
             .withVertexShader(ResourceLocationUtils.getIdentifier("rectangle"))
             .withFragmentShader(ResourceLocationUtils.getIdentifier("rectangle"))
+            .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
+            .withCull(false)
+            .build();
+
+    private final static RenderPipeline.Snippet TTF_SNIPPET = RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
+            .withUniform("TtfInfo", UniformType.UNIFORM_BUFFER)
+            .buildSnippet();
+
+    public final static RenderPipeline TTF_FONT = RenderPipeline.builder(TTF_SNIPPET)
+            .withLocation(ResourceLocationUtils.getIdentifier("pipelines/ttf_font"))
+            .withVertexFormat(DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS)
+            .withVertexShader(ResourceLocationUtils.getIdentifier("ttf_font"))
+            .withFragmentShader(ResourceLocationUtils.getIdentifier("ttf_font"))
             .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
             .withCull(false)
             .build();

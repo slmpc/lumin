@@ -1,23 +1,26 @@
 package com.github.slmpc.lumin.graphics.renderers;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
+
+import com.github.slmpc.lumin.graphics.text.ITextRenderer;
+import com.github.slmpc.lumin.graphics.text.ttf.TtfTextRenderer;
+
+import java.awt.*;
 
 public class TextRenderer implements IRenderer {
 
-    private BufferBuilder bufferBuilder = Tesselator.getInstance()
-            .begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+    private final ITextRenderer textRenderer = new TtfTextRenderer();
 
+    public void addText(String text, float x, float y, Color color, float scale) {
+        textRenderer.addText(text, x, y, color, scale);
+    }
 
     @Override
     public void draw() {
-
+        textRenderer.draw();
     }
 
     @Override
     public void clear() {
-        bufferBuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+        textRenderer.clear();
     }
 }
