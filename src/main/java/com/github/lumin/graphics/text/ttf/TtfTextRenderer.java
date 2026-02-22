@@ -39,7 +39,7 @@ public class TtfTextRenderer implements ITextRenderer {
     private final Map<TtfGlyphAtlas, AtlasBatch> batches = new LinkedHashMap<>();
 
     private final TtfFontLoader fontLoader =
-            new TtfFontLoader(ResourceLocationUtils.getIdentifier("font/pingfang.ttf"));
+            new TtfFontLoader(ResourceLocationUtils.getIdentifier("fonts/pingfang.ttf"));
 
     private GpuBuffer ttfInfoUniformBuf = null;
     private long currentOffset = 0;
