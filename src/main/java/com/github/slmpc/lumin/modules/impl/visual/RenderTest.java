@@ -1,8 +1,10 @@
 package com.github.slmpc.lumin.modules.impl.visual;
 
 import com.github.slmpc.lumin.graphics.renderers.RectRenderer;
+import com.github.slmpc.lumin.graphics.renderers.TextRenderer;
 import com.github.slmpc.lumin.modules.AbstractModule;
 import com.github.slmpc.lumin.modules.Category;
+import com.github.slmpc.lumin.settings.impl.IntSetting;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import org.lwjgl.glfw.GLFW;
@@ -25,12 +27,18 @@ public class RenderTest extends AbstractModule {
     }
 
     private final RectRenderer rectRenderer = new RectRenderer();
+    private final TextRenderer textRenderer = new TextRenderer();
+
+    private final IntSetting rectX = intSetting("rect_x", 10, 0, 100, 5);
+    private final IntSetting rectY = intSetting("rect_y", 10, 0, 100, 5);
 
     @SubscribeEvent
     public void onRenderGui(RenderGuiEvent.Post event) {
-        rectRenderer.addRect(10, 10, 200, 200, Color.BLACK);
+        rectRenderer.addRect(rectX.getValue(), rectY.getValue(), 200, 200, Color.WHITE);
         rectRenderer.drawAndClear();
-    }
 
+        textRenderer.addText("hello 你好 我真的很新欢你  我想要草席你手动阀", 10.0f, 100.0f, Color.BLACK, 1.0f);
+        textRenderer.drawAndClear();
+    }
 
 }
