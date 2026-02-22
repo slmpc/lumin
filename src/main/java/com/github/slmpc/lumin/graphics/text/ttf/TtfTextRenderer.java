@@ -28,6 +28,8 @@ import java.util.OptionalInt;
 
 public class TtfTextRenderer implements ITextRenderer {
 
+    private static final float DEFAULT_SCALE = 0.35f;
+
     private final HashMap<TtfGlyphAtlas, BufferBuilder> buffers = new HashMap<>();
     private final TtfFontLoader fontLoader =
             new TtfFontLoader(ResourceLocationUtils.getIdentifier("font/font.ttf"));
@@ -36,6 +38,8 @@ public class TtfTextRenderer implements ITextRenderer {
 
     @Override
     public void addText(String text, float x, float y, Color color, float scale) {
+        scale = scale * DEFAULT_SCALE;
+
         fontLoader.checkAndLoadChars(text);
         float xOffset = 0f;
 
@@ -47,8 +51,8 @@ public class TtfTextRenderer implements ITextRenderer {
                     Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR));
 
             float x1 = x + xOffset;
-            float y1 = y + glyph.yOffset();
             float x2 = x1 + glyph.width() * scale;
+            float y1 = y + glyph.yOffset() * scale;
             float y2 = y1 + glyph.height() * scale;
 
             buffer.addVertex(x1, y1, 0).setUv(glyph.uv().u0(), glyph.uv().v0()).setColor(color.getRGB());
@@ -56,7 +60,7 @@ public class TtfTextRenderer implements ITextRenderer {
             buffer.addVertex(x2, y2, 0).setUv(glyph.uv().u1(), glyph.uv().v1()).setColor(color.getRGB());
             buffer.addVertex(x2, y1, 0).setUv(glyph.uv().u1(), glyph.uv().v0()).setColor(color.getRGB());
 
-            xOffset += glyph.width() * scale;
+            xOffset += glyph.advance() * scale;
         }
     }
 
@@ -79,7 +83,7 @@ public class TtfTextRenderer implements ITextRenderer {
                     .mapBuffer(ttfInfoUniformBuf, false, true)
             ) {
                 Std140Builder.intoBuffer(mappedView.data())
-                        .putFloat(0.5f);
+                        .putFloat(0.52f);
             }
         }
 
@@ -120,7 +124,7 @@ public class TtfTextRenderer implements ITextRenderer {
                     pass.setVertexBuffer(0, vbo);
                     pass.setIndexBuffer(ibo, autoIndices.type());
 
-                    pass.bindTexture("Sampler0", atlas.getTexture().getTextureView(), atlas.getTexture().getSampler());
+                    pass.bindTexture("Sampler0", atlas.getTexture().textureView(), atlas.getTexture().sampler());
 
                     pass.drawIndexed(0, 0, meshData.drawState().indexCount(), 1);
                 }

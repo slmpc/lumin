@@ -37,7 +37,7 @@ public class RenderTest extends AbstractModule {
         rectRenderer.addRect(rectX.getValue(), rectY.getValue(), 200, 200, Color.WHITE);
         rectRenderer.drawAndClear();
 
-        textRenderer.addText("hello", 10.0f, 10.0f, Color.BLACK, 1.0f);
+        textRenderer.addText("hello 你好 我真的很新欢你  我想要草席你手动阀", 10.0f, 100.0f, Color.BLACK, 1.0f);
         textRenderer.drawAndClear();
     }
 
