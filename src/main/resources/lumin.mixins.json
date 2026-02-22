@@ -1,8 +1,10 @@
 {
   "required": true,
-  "package": "com.github.slmpc.lumin.mixin",
+  "package": "com.github.slmpc.lumin.mixins",
   "compatibilityLevel": "JAVA_21",
-  "mixins": [],
+  "mixins": [
+    "GlDebugMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   },

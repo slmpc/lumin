@@ -1,5 +1,6 @@
 package com.github.slmpc.lumin.graphics.renderers;
 
+import com.github.slmpc.lumin.graphics.LuminRenderSystem;
 import com.github.slmpc.lumin.graphics.LuminRenderTypes;
 import com.mojang.blaze3d.vertex.*;
 
@@ -11,15 +12,16 @@ public class RectRenderer implements IRenderer {
             .begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 
     public void addRect(float x, float y, float width, float height, Color color) {
-        // CCW
-        bufferBuilder.addVertex(x, y, 0).setColor(color.getRGB());
-        bufferBuilder.addVertex(x, y + height, 0).setColor(color.getRGB());
-        bufferBuilder.addVertex(x + width, y + height, 0).setColor(color.getRGB());
-        bufferBuilder.addVertex(x + width, y + height, 0).setColor(color.getRGB());
+        bufferBuilder.addVertex(x, y, 0.0f).setColor(color.getRGB());
+        bufferBuilder.addVertex(x + width, y, 0.0f).setColor(color.getRGB());
+        bufferBuilder.addVertex(x + width, y + height, 0.0f).setColor(color.getRGB());
+        bufferBuilder.addVertex(x, y + height, 0.0f).setColor(color.getRGB());
     }
 
     @Override
     public void draw() {
+        LuminRenderSystem.applyOrthoProjection();
+
         MeshData meshData = bufferBuilder.build();
         if (meshData == null) return;
 
