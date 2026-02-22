@@ -1,0 +1,111 @@
+package com.github.lumin.graphics.renderers;
+
+import com.github.lumin.graphics.LuminRenderPipelines;
+import com.github.lumin.graphics.LuminRenderSystem;
+import com.github.lumin.graphics.buffer.LuminBuffer;
+import com.mojang.blaze3d.buffers.GpuBuffer;
+import com.mojang.blaze3d.buffers.GpuBufferSlice;
+import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.systems.RenderPass;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.rendertype.TextureTransform;
+import net.minecraft.util.ARGB;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
+import org.lwjgl.system.MemoryUtil;
+
+import java.awt.*;
+import java.util.OptionalDouble;
+import java.util.OptionalInt;
+
+public class RoundRectRenderer implements IRenderer {
+
+    private static final long BUFFER_SIZE = 8 * 1024 * 1024;
+    private final LuminBuffer buffer = new LuminBuffer(BUFFER_SIZE, GpuBuffer.USAGE_VERTEX);
+
+    public void addRoundRect(float x, float y, float width, float height, float radius, Color color) {
+        float x2 = x + width;
+        float y2 = y + height;
+
+        float expand = radius + 1.0f;
+        float vx1 = x - expand;
+        float vy1 = y - expand;
+        float vx2 = x2 + expand;
+        float vy2 = y2 + expand;
+
+        int argb = color.getRGB();
+
+        addVertex(vx1, vy1, x, y, x2, y2, radius, argb);
+        addVertex(vx1, vy2, x, y, x2, y2, radius, argb);
+        addVertex(vx2, vy2, x, y, x2, y2, radius, argb);
+        addVertex(vx2, vy1, x, y, x2, y2, radius, argb);
+    }
+
+    private long currentOffset = 0;
+    private int vertexCount = 0;
+
+    private void addVertex(float vx, float vy, float x1, float y1, float x2, float y2, float radius, int color) {
+        long baseAddr = MemoryUtil.memAddress(buffer.getMappedBuffer());
+        long p = baseAddr + currentOffset;
+
+        MemoryUtil.memPutFloat(p, vx);
+        MemoryUtil.memPutFloat(p + 4, vy);
+        MemoryUtil.memPutFloat(p + 8, 0.0f);
+
+        MemoryUtil.memPutInt(p + 12, ARGB.toABGR(color));
+
+        MemoryUtil.memPutFloat(p + 16, x1);
+        MemoryUtil.memPutFloat(p + 20, y1);
+        MemoryUtil.memPutFloat(p + 24, x2);
+        MemoryUtil.memPutFloat(p + 28, y2);
+
+        MemoryUtil.memPutFloat(p + 32, radius);
+
+        currentOffset += 36;
+        vertexCount++;
+    }
+
+    @Override
+    public void draw() {
+        LuminRenderSystem.applyOrthoProjection();
+
+        RenderTarget target = Minecraft.getInstance().getMainRenderTarget();
+        if (target.getColorTextureView() == null) return;
+
+        final var indexCount = vertexCount / 4 * 6;
+
+        RenderSystem.AutoStorageIndexBuffer autoIndices =
+                RenderSystem.getSequentialBuffer(VertexFormat.Mode.QUADS);
+        GpuBuffer ibo = autoIndices.getBuffer(indexCount);
+
+        try (RenderPass pass = RenderSystem.getDevice().createCommandEncoder().createRenderPass(
+                () -> "Round Rect Draw",
+                target.getColorTextureView(), OptionalInt.empty(),
+                target.getDepthTextureView(), OptionalDouble.empty())
+        ) {
+            GpuBufferSlice dynamicUniforms = RenderSystem.getDynamicUniforms().writeTransform(
+                    RenderSystem.getModelViewMatrix(),
+                    new Vector4f(1, 1, 1, 1),
+                    new Vector3f(0, 0, 0),
+                    TextureTransform.DEFAULT_TEXTURING.getMatrix()
+            );
+
+            pass.setPipeline(LuminRenderPipelines.ROUND_RECT);
+
+            RenderSystem.bindDefaultUniforms(pass);
+            pass.setUniform("DynamicTransforms", dynamicUniforms);
+            pass.setVertexBuffer(0, buffer.getGpuBuffer());
+            pass.setIndexBuffer(ibo, autoIndices.type());
+
+            pass.drawIndexed(0, 0, indexCount, 1);
+        }
+    }
+
+    @Override
+    public void clear() {
+        vertexCount = 0;
+        currentOffset = 0;
+    }
+}
