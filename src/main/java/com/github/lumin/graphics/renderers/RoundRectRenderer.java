@@ -22,7 +22,7 @@ import java.util.OptionalInt;
 
 public class RoundRectRenderer implements IRenderer {
 
-    private static final long BUFFER_SIZE = 8 * 1024 * 1024;
+    private static final long BUFFER_SIZE = 2 * 1024 * 1024;
     private final LuminBuffer buffer = new LuminBuffer(BUFFER_SIZE, GpuBuffer.USAGE_VERTEX);
 
     public void addRoundRect(float x, float y, float width, float height, float radius, Color color) {
@@ -80,18 +80,18 @@ public class RoundRectRenderer implements IRenderer {
                 RenderSystem.getSequentialBuffer(VertexFormat.Mode.QUADS);
         GpuBuffer ibo = autoIndices.getBuffer(indexCount);
 
+        GpuBufferSlice dynamicUniforms = RenderSystem.getDynamicUniforms().writeTransform(
+                RenderSystem.getModelViewMatrix(),
+                new Vector4f(1, 1, 1, 1),
+                new Vector3f(0, 0, 0),
+                TextureTransform.DEFAULT_TEXTURING.getMatrix()
+        );
+
         try (RenderPass pass = RenderSystem.getDevice().createCommandEncoder().createRenderPass(
                 () -> "Round Rect Draw",
                 target.getColorTextureView(), OptionalInt.empty(),
                 target.getDepthTextureView(), OptionalDouble.empty())
         ) {
-            GpuBufferSlice dynamicUniforms = RenderSystem.getDynamicUniforms().writeTransform(
-                    RenderSystem.getModelViewMatrix(),
-                    new Vector4f(1, 1, 1, 1),
-                    new Vector3f(0, 0, 0),
-                    TextureTransform.DEFAULT_TEXTURING.getMatrix()
-            );
-
             pass.setPipeline(LuminRenderPipelines.ROUND_RECT);
 
             RenderSystem.bindDefaultUniforms(pass);
