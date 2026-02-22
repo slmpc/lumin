@@ -39,7 +39,7 @@ public class RenderTest extends AbstractModule {
     @SubscribeEvent
     public void onRenderGui(RenderGuiEvent.Post event) {
         rectRenderer.get().addRect(rectX.getValue(), rectY.getValue(), 200, 200, Color.WHITE);
-        textRenderer.get().addText("Minecraft 原神 启动！", 10.0f, 10.0f, Color.BLACK, 1.0f);
+        textRenderer.get().addText("Minecraft 原神 启动！", 10.0f, 10.0f, Color.BLACK, 7.0f);
         roundRectRenderer.get().addRoundRect(100, 100, 100, 100, 10.0f, Color.BLUE);
 
         rectRenderer.get().drawAndClear();
