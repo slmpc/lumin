@@ -14,7 +14,7 @@ layout(location = 0) out vec4 f_Color;
 void main() {
     float distance = 1.0f - texture(Sampler0, v_TexCoord).r;
 
-    float afwidth = fwidth(distance) * 0.45;
+    float afwidth = fwidth(distance) * 0.5;
 
     float alpha = smoothstep(EdgeThreshold - afwidth, EdgeThreshold + afwidth, distance);
 
