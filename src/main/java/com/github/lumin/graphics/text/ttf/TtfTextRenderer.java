@@ -22,7 +22,10 @@ import org.joml.Vector4f;
 import org.lwjgl.system.MemoryUtil;
 
 import java.awt.*;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.OptionalDouble;
+import java.util.OptionalInt;
 
 public class TtfTextRenderer implements ITextRenderer {
 

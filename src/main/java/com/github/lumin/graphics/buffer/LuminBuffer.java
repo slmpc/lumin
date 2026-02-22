@@ -9,7 +9,7 @@ public class LuminBuffer {
 
     private final GpuBuffer gpuBuffer;
 
-    private GpuBuffer.MappedView mappedBuffer;
+    private final GpuBuffer.MappedView mappedBuffer;
 
     public LuminBuffer(long size, @GpuBuffer.Usage int usage) {
 

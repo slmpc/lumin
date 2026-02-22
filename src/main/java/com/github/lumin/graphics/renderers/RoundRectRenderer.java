@@ -69,37 +69,23 @@ public class RoundRectRenderer implements IRenderer {
 
     @Override
     public void draw() {
-        LuminRenderSystem.applyOrthoProjection();
-
-        RenderTarget target = Minecraft.getInstance().getMainRenderTarget();
-        if (target.getColorTextureView() == null) return;
-
-        final var indexCount = vertexCount / 4 * 6;
-
-        RenderSystem.AutoStorageIndexBuffer autoIndices =
-                RenderSystem.getSequentialBuffer(VertexFormat.Mode.QUADS);
-        GpuBuffer ibo = autoIndices.getBuffer(indexCount);
-
-        GpuBufferSlice dynamicUniforms = RenderSystem.getDynamicUniforms().writeTransform(
-                RenderSystem.getModelViewMatrix(),
-                new Vector4f(1, 1, 1, 1),
-                new Vector3f(0, 0, 0),
-                TextureTransform.DEFAULT_TEXTURING.getMatrix()
-        );
+        LuminRenderSystem.QuadRenderingInfo info = LuminRenderSystem.prepareQuadRendering(vertexCount);
+        if (info == null) return;
+        if (info.target().getColorTextureView() == null) return;
 
         try (RenderPass pass = RenderSystem.getDevice().createCommandEncoder().createRenderPass(
                 () -> "Round Rect Draw",
-                target.getColorTextureView(), OptionalInt.empty(),
-                target.getDepthTextureView(), OptionalDouble.empty())
+                info.target().getColorTextureView(), OptionalInt.empty(),
+                info.target().getDepthTextureView(), OptionalDouble.empty())
         ) {
             pass.setPipeline(LuminRenderPipelines.ROUND_RECT);
 
             RenderSystem.bindDefaultUniforms(pass);
-            pass.setUniform("DynamicTransforms", dynamicUniforms);
+            pass.setUniform("DynamicTransforms", info.dynamicUniforms());
             pass.setVertexBuffer(0, buffer.getGpuBuffer());
-            pass.setIndexBuffer(ibo, autoIndices.type());
+            pass.setIndexBuffer(info.ibo(), info.autoIndices().type());
 
-            pass.drawIndexed(0, 0, indexCount, 1);
+            pass.drawIndexed(0, 0, info.indexCount(), 1);
         }
     }
 
