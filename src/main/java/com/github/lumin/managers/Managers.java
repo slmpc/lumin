@@ -6,7 +6,7 @@ public class Managers {
 
     public static void initManagers() {
 
-        ModuleManager.getInstance();
+        ModuleManager.init();
 
     }
 

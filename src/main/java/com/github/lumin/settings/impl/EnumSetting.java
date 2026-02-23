@@ -2,18 +2,22 @@ package com.github.lumin.settings.impl;
 
 import com.github.lumin.modules.AbstractModule;
 import com.github.lumin.settings.AbstractSetting;
-import com.github.lumin.utils.i18n.TranslateComponent;
-import net.minecraft.client.resources.language.I18n;
+import com.github.lumin.assets.i18n.TranslateComponent;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class EnumSetting<E extends Enum<E>> extends AbstractSetting<E> {
 
     private final E[] modes;
+    private final Map<E, TranslateComponent> translationCache = new HashMap<>();
 
     public EnumSetting(AbstractModule parent, String name, E defaultValue, E[] modes, Dependency dependency) {
         super(parent, name, dependency);
         this.value = defaultValue;
         this.defaultValue = defaultValue;
         this.modes = modes;
+        prewarmCache();
     }
 
     public EnumSetting(AbstractModule parent, String name, E defaultValue, E[] modes) {
@@ -33,9 +37,21 @@ public class EnumSetting<E extends Enum<E>> extends AbstractSetting<E> {
         }
     }
 
+    private void prewarmCache() {
+        for (E mode : modes) {
+            translationCache.put(mode, TranslateComponent.create(
+                    name.fullKeyWithoutLumin,
+                    mode.name().toLowerCase()
+            ));
+        }
+    }
+
     public String getValueDisplayName() {
-        final var translation = new TranslateComponent(name.getFullKeyWithoutPrefix(), getValue().name().toLowerCase());
-        return I18n.get(translation.getFullKey());
+        final var translation = translationCache.get(defaultValue);
+        if (translation != null) {
+            return translation.getTranslatedName();
+        }
+        return "ENUM-I18N";
     }
 
     public E[] getModes() {

@@ -3,8 +3,7 @@ package com.github.lumin.modules;
 import com.github.lumin.Lumin;
 import com.github.lumin.settings.AbstractSetting;
 import com.github.lumin.settings.impl.*;
-import com.github.lumin.settings.impl.*;
-import com.github.lumin.utils.i18n.TranslateComponent;
+import com.github.lumin.assets.i18n.TranslateComponent;
 import net.neoforged.neoforge.common.NeoForge;
 
 import java.awt.*;
@@ -21,7 +20,7 @@ public abstract class AbstractModule {
     private final ArrayList<AbstractSetting<?>> settings = new ArrayList<>();
 
     public AbstractModule(String nameKey, Category category) {
-        this.name = new TranslateComponent("modules", nameKey);
+        this.name = TranslateComponent.create("modules", nameKey);
         this.category = category;
     }
 
@@ -34,13 +33,13 @@ public abstract class AbstractModule {
                 NeoForge.EVENT_BUS.register(this);
             } catch (Exception ignored) {}
 
-            Lumin.LOGGER.info("{} has been enabled", name.suffix());
+            Lumin.LOGGER.info("{} has been enabled", name.getTranslatedName());
         } else {
             try {
                 NeoForge.EVENT_BUS.unregister(this);
             } catch (Exception ignored) {}
 
-            Lumin.LOGGER.info("{} has been disabled", name.suffix());
+            Lumin.LOGGER.info("{} has been disabled", name.getTranslatedName());
         }
     }
 

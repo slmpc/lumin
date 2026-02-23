@@ -22,6 +22,12 @@ public class ModuleManager {
         return INSTANCE;
     }
 
+    public static void init() {
+        if (INSTANCE == null) {
+            INSTANCE = new ModuleManager();
+        }
+    }
+
     private void initModules() {
         modules = List.of(
                 /* VISUAL */

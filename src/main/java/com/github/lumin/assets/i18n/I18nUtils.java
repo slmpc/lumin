@@ -1,4 +1,4 @@
-package com.github.lumin.utils.i18n;
+package com.github.lumin.assets.i18n;
 
 import com.github.lumin.modules.Category;
 
@@ -6,19 +6,19 @@ public class I18nUtils {
 
     /****** Categories ******/
     private static final TranslateComponent CATEGORY_COMBAT_COMPONENT
-            = new TranslateComponent("category", "combat");
+            = TranslateComponent.create("category", "combat");
 
     private static final TranslateComponent CATEGORY_MOVEMENT_COMPONENT
-            = new TranslateComponent("category", "movement");
+            = TranslateComponent.create("category", "movement");
 
     private static final TranslateComponent CATEGORY_MISC_COMPONENT
-            = new TranslateComponent("category", "misc");
+            = TranslateComponent.create("category", "misc");
 
     private static final TranslateComponent CATEGORY_VISUAL_COMPONENT
-            = new TranslateComponent("category", "visual");
+            = TranslateComponent.create("category", "visual");
 
     private static final TranslateComponent CATEGORY_CLIENT_COMPONENT
-            = new TranslateComponent("category", "client");
+            = TranslateComponent.create("category", "client");
 
     public static TranslateComponent getTranslateComponentFromCategory(Category category) {
         return switch (category) {

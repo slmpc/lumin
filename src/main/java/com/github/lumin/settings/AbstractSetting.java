@@ -1,7 +1,7 @@
 package com.github.lumin.settings;
 
 import com.github.lumin.modules.AbstractModule;
-import com.github.lumin.utils.i18n.TranslateComponent;
+import com.github.lumin.assets.i18n.TranslateComponent;
 import net.minecraft.client.resources.language.I18n;
 
 public abstract class AbstractSetting<V> {
@@ -19,7 +19,7 @@ public abstract class AbstractSetting<V> {
         this.nameKey = nameKey;
         this.dependency = dependency;
 
-        name = new TranslateComponent(parent.name.getFullKeyWithoutPrefix(), nameKey);
+        name = TranslateComponent.create(parent.name.fullKeyWithoutLumin, nameKey);
     }
 
     public AbstractSetting(AbstractModule parent, String nameKey) {
@@ -27,7 +27,7 @@ public abstract class AbstractSetting<V> {
     }
 
     public String getDisplayName() {
-        return I18n.get(name.getFullKey());
+        return I18n.get(name.fullKey);
     }
 
     public V getValue() {
