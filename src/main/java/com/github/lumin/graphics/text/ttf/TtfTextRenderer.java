@@ -81,6 +81,7 @@ public class TtfTextRenderer implements ITextRenderer {
 
             LuminBuffer buffer = atlasBuffers.computeIfAbsent(atlas,
                     k -> new LuminBuffer(bufferSize, GpuBuffer.USAGE_VERTEX));
+            buffer.tryMap();
             long currentOffset = atlasOffsets.getOrDefault(atlas, 0L);
 
             float baselineY = yOffset + y + (fontLoader.fontFile.pixelAscent * finalScale);
@@ -135,6 +136,7 @@ public class TtfTextRenderer implements ITextRenderer {
         for (Map.Entry<TtfGlyphAtlas, LuminBuffer> entry : atlasBuffers.entrySet()) {
             TtfGlyphAtlas atlas = entry.getKey();
             LuminBuffer luminBuffer = entry.getValue();
+            luminBuffer.unmap();
             long writtenBytes = atlasOffsets.getOrDefault(atlas, 0L);
 
             if (writtenBytes == 0) continue;

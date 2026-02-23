@@ -9,7 +9,9 @@ public class LuminBuffer {
 
     private final GpuBuffer gpuBuffer;
 
-    private final GpuBuffer.MappedView mappedBuffer;
+    private GpuBuffer.MappedView mappedBuffer;
+
+    private boolean mapped;
 
     public LuminBuffer(long size, @GpuBuffer.Usage int usage) {
 
@@ -22,15 +24,33 @@ public class LuminBuffer {
         mappedBuffer = RenderSystem.getDevice().createCommandEncoder().mapBuffer(
                 gpuBuffer, false, true
         );
-
+        mapped = true;
     }
 
     public ByteBuffer getMappedBuffer() {
         return mappedBuffer.data();
     }
 
+    /**
+     * 尝试 Map 此 Buffer
+     * 如已经 Map 则不会执行
+     */
+    public void tryMap() {
+        if (mapped) return;
+        mappedBuffer = RenderSystem.getDevice().createCommandEncoder().mapBuffer(
+                gpuBuffer, false, true
+        );
+    }
+
+    /**
+     * 调用 Blaze3D 的 unmap
+     * 在支持 GL_MAP_PERSISTENT_BIT GL_MAP_FLUSH_EXPLICIT_BIT 的情况下不会执行 Unmap 只会调用 Flush
+     * 在支持 GL_MAP_COHERENT_BIT 情况下不会 Flush
+     * 在均不支持的情况下 会退化至 glBufferData + glMapBufferRange + glUnmapBuffer
+     */
     public void unmap() {
         mappedBuffer.close();
+        mapped = false;
     }
 
     public GpuBuffer getGpuBuffer() {

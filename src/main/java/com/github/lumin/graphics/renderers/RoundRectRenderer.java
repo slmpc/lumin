@@ -26,6 +26,8 @@ public class RoundRectRenderer implements IRenderer {
     private final LuminBuffer buffer = new LuminBuffer(BUFFER_SIZE, GpuBuffer.USAGE_VERTEX);
 
     public void addRoundRect(float x, float y, float width, float height, float radius, Color color) {
+        buffer.tryMap();
+
         float x2 = x + width;
         float y2 = y + height;
 
@@ -72,6 +74,8 @@ public class RoundRectRenderer implements IRenderer {
         LuminRenderSystem.QuadRenderingInfo info = LuminRenderSystem.prepareQuadRendering(vertexCount);
         if (info == null) return;
         if (info.target().getColorTextureView() == null) return;
+
+        buffer.unmap();
 
         try (RenderPass pass = RenderSystem.getDevice().createCommandEncoder().createRenderPass(
                 () -> "Round Rect Draw",

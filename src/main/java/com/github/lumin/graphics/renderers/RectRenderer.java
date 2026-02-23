@@ -27,6 +27,8 @@ public class RectRenderer implements IRenderer {
     private int vertexCount = 0;
 
     public void addRect(float x, float y, float width, float height, Color color) {
+        buffer.tryMap();
+
         int argb = ARGB.toABGR(color.getRGB());
 
         addVertex(x, y, argb);
@@ -51,6 +53,7 @@ public class RectRenderer implements IRenderer {
     @Override
     public void draw() {
         if (vertexCount == 0) return;
+        buffer.unmap();
         LuminRenderSystem.QuadRenderingInfo info = LuminRenderSystem.prepareQuadRendering(vertexCount);
 
         if (info == null) return;
