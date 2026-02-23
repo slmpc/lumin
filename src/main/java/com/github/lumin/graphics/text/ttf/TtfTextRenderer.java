@@ -1,12 +1,12 @@
 package com.github.lumin.graphics.text.ttf;
 
+import com.github.lumin.assets.resources.ResourceLocationUtils;
 import com.github.lumin.graphics.LuminRenderPipelines;
 import com.github.lumin.graphics.LuminRenderSystem;
 import com.github.lumin.graphics.buffer.BufferUtils;
 import com.github.lumin.graphics.buffer.LuminBuffer;
 import com.github.lumin.graphics.text.GlyphDescriptor;
 import com.github.lumin.graphics.text.ITextRenderer;
-import com.github.lumin.assets.resources.ResourceLocationUtils;
 import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.buffers.Std140Builder;
@@ -109,6 +109,38 @@ public class TtfTextRenderer implements ITextRenderer {
     }
 
     @Override
+    public float getWidth(String text, float scale) {
+        fontLoader.checkAndLoadChars(text);
+
+        final var finalScale = scale * DEFAULT_SCALE;
+        float maxLine = 0.0f;
+        float currentLine = 0.0f;
+
+        for (char ch : text.toCharArray()) {
+            switch (ch) {
+                case ' ': {
+                    currentLine += 3.0f * scale;
+                    break;
+                }
+                case '\n': {
+                    maxLine = Math.max(maxLine, currentLine);
+                    currentLine = 0.0f;
+                    break;
+                }
+                default: {
+                    GlyphDescriptor glyph = fontLoader.getGlyph(ch);
+                    if (glyph == null) break;
+                    currentLine += glyph.advance() * finalScale + SPACING * scale;
+                    break;
+                }
+            }
+        }
+
+        maxLine = Math.max(maxLine, currentLine);
+        return maxLine;
+    }
+
+    @Override
     public void draw() {
         if (batches.isEmpty()) return;
 
@@ -178,6 +210,7 @@ public class TtfTextRenderer implements ITextRenderer {
         for (Map.Entry<TtfGlyphAtlas, Batch> entry : batches.entrySet()) {
             final var batch = entry.getValue();
             batch.atlasOffsets = 0;
+            batch.flushBufferFlag = false;
         }
     }
 

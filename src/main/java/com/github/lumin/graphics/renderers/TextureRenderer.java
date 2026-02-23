@@ -1,11 +1,11 @@
 package com.github.lumin.graphics.renderers;
 
+import com.github.lumin.assets.resources.ResourceLocationUtils;
 import com.github.lumin.graphics.LuminRenderPipelines;
 import com.github.lumin.graphics.LuminRenderSystem;
 import com.github.lumin.graphics.LuminTexture;
 import com.github.lumin.graphics.buffer.BufferUtils;
 import com.github.lumin.graphics.buffer.LuminBuffer;
-import com.github.lumin.assets.resources.ResourceLocationUtils;
 import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.platform.NativeImage;
@@ -171,6 +171,7 @@ public class TextureRenderer implements IRenderer {
         for (Batch batch : batches.values()) {
             batch.currentOffset = 0;
             batch.vertexCount = 0;
+            batch.flushBufferFlag = false;
         }
     }
 
