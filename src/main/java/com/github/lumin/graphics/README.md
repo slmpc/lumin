@@ -20,6 +20,28 @@ Here is the professional English translation and optimization of your **Quick St
 
 ---
 
+[!CAUTION]
+
+## 💡 WARNING
+
+### Lifecycle Synchronization Constraints
+
+Within a single frame's render loop, it is strictly prohibited to call 
+`Renderer.clear()` followed by another `draw()` on the same instance after 
+a `draw()` has already been executed. This sequence causes severe 
+synchronization conflicts between CPU writes and GPU reads, leading to 
+visual flickering or the disappearance of primitives.
+
+If your business logic requires multiple cycles of clearing and drawing within a single frame:
+
+Please instantiate a new Renderer to handle subsequent tasks.
+
+**💡 NOTE**: Please avoid creating excessive Renderer instances, as this will 
+lead to over-allocation of VRAM. Alternatively, you may specify a smaller Buffer size 
+than the default value when instantiating a Renderer to mitigate memory overhead.
+
+---
+
 ## Quick Start
 
 Lumin Graphics performs all rendering through specialized **Renderers**.
