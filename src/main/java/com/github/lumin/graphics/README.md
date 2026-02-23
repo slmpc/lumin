@@ -1,7 +1,12 @@
 # Lumin Graphics
 
+**English** | [简体中文](README_zh.md)
+
 Lumin Graphics is a lightweight, high-performance rendering framework 
 designed for modern Minecraft modding.
+
+
+### IMPORTANT: The English version may occasionally be out of sync.
 
 ---
 
@@ -24,6 +29,7 @@ Lumin Graphics performs all rendering through specialized **Renderers**.
 * `RectRenderer`: Optimized for standard flat rectangles.
 * `RoundRectRenderer`: For anti-aliased rectangles with dynamic corner radii.
 * `TtfTextRenderer`: For high-performance TrueType font rendering.
+* `TextureRenderer`：For drawing different textures.
 
 ### Initialization & Thread Safety
 
