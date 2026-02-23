@@ -45,7 +45,6 @@ public class LuminBuffer {
     /**
      * 调用 Blaze3D 的 unmap
      * 在支持 GL_MAP_PERSISTENT_BIT GL_MAP_FLUSH_EXPLICIT_BIT 的情况下不会执行 Unmap 只会调用 Flush
-     * 在支持 GL_MAP_COHERENT_BIT 情况下不会 Flush
      * 在均不支持的情况下 会退化至 glBufferData + glMapBufferRange + glUnmapBuffer
      */
     public void unmap() {
