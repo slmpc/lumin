@@ -76,7 +76,7 @@ public class RenderTest extends AbstractModule {
                     "写代码不仅是生存的技能，它更是一种修行。\n" +
                     "当你坐在电脑前，看着屏幕上的代码行，你其实是在与古往今来的数学家、计算机科学家以及未来的自己进行对话。那小小的偏移量修正，那一次对 Map 结构的深思熟虑，都是你留在这个数字宇宙里的印记。\n" +
                     "即便有一天，所有的硬件都化为废铁，所有的 Buffer 都被清空，但你通过逻辑构建世界的那份纯粹，已经在那一刻成为了永恒。\n" +
-                    "字数统计： 本文约 1200 字。", 10f, 10f, Color.BLACK);
+                    "字数统计： 本文约 1200 字。", 10f, 10f, Color.BLACK, 5.0f);
             roundRectRenderer.get().addRoundRect(25, 25, width - 50, height - 50, 15.0f, Color.WHITE);
             first = false;
         }
