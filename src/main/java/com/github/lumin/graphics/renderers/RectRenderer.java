@@ -25,9 +25,11 @@ public class RectRenderer implements IRenderer {
     private final LuminBuffer buffer = new LuminBuffer(BUFFER_SIZE, GpuBuffer.USAGE_VERTEX);
     private long currentOffset = 0;
     private int vertexCount = 0;
+    private boolean flushBufferFlag = false;
 
     public void addRect(float x, float y, float width, float height, Color color) {
         buffer.tryMap();
+        flushBufferFlag = true;
 
         int argb = ARGB.toABGR(color.getRGB());
 
@@ -53,7 +55,12 @@ public class RectRenderer implements IRenderer {
     @Override
     public void draw() {
         if (vertexCount == 0) return;
-        buffer.unmap();
+
+        if (flushBufferFlag) {
+            buffer.unmap();
+        }
+        flushBufferFlag = false;
+
         LuminRenderSystem.QuadRenderingInfo info = LuminRenderSystem.prepareQuadRendering(vertexCount);
 
         if (info == null) return;

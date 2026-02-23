@@ -58,6 +58,7 @@ public class TextureRenderer implements IRenderer {
     public void addTexture(Identifier texture, float x, float y, float width, float height, float u0, float v0, float u1, float v1, Color color) {
         Batch batch = batches.computeIfAbsent(texture, k -> new Batch(new LuminBuffer(bufferSize, GpuBuffer.USAGE_VERTEX)));
         batch.buffer.tryMap();
+        batch.flushBufferFlag = true;
 
         if (batch.currentOffset + (long) STRIDE * 4L > bufferSize) {
             return;
@@ -107,7 +108,10 @@ public class TextureRenderer implements IRenderer {
 
             LuminTexture texture = textureCache.computeIfAbsent(textureId, this::loadTexture);
 
-            batch.buffer.unmap();
+            if (batch.flushBufferFlag) {
+                batch.buffer.unmap();
+            }
+            batch.flushBufferFlag = false;
 
             try (RenderPass pass = RenderSystem.getDevice().createCommandEncoder().createRenderPass(
                     () -> "Texture Draw",
@@ -187,6 +191,7 @@ public class TextureRenderer implements IRenderer {
         final LuminBuffer buffer;
         long currentOffset;
         int vertexCount;
+        public boolean flushBufferFlag;
 
         private Batch(LuminBuffer buffer) {
             this.buffer = buffer;
