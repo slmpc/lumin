@@ -13,6 +13,10 @@ import net.neoforged.neoforge.client.event.RegisterRenderPipelinesEvent;
 
 public class LuminRenderPipelines {
 
+    private final static RenderPipeline.Snippet TTF_SNIPPET = RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
+            .withUniform("TtfInfo", UniformType.UNIFORM_BUFFER)
+            .buildSnippet();
+
     public final static RenderPipeline RECTANGLE = RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
             .withLocation(ResourceLocationUtils.getIdentifier("pipelines/rectangle"))
             .withVertexFormat(DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS)
@@ -21,10 +25,6 @@ public class LuminRenderPipelines {
             .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
             .withCull(false)
             .build();
-
-    private final static RenderPipeline.Snippet TTF_SNIPPET = RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
-            .withUniform("TtfInfo", UniformType.UNIFORM_BUFFER)
-            .buildSnippet();
 
     public final static RenderPipeline TTF_FONT = RenderPipeline.builder(TTF_SNIPPET)
             .withLocation(ResourceLocationUtils.getIdentifier("pipelines/ttf_font"))
@@ -46,10 +46,22 @@ public class LuminRenderPipelines {
             .withCull(false)
             .build();
 
+    public final static RenderPipeline TEXTURE = RenderPipeline.builder(RenderPipelines.MATRICES_PROJECTION_SNIPPET)
+            .withLocation(ResourceLocationUtils.getIdentifier("pipelines/texture"))
+            .withVertexFormat(DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS)
+            .withVertexShader(ResourceLocationUtils.getIdentifier("texture"))
+            .withFragmentShader(ResourceLocationUtils.getIdentifier("texture"))
+            .withDepthTestFunction(DepthTestFunction.NO_DEPTH_TEST)
+            .withSampler("Sampler0")
+            .withBlend(BlendFunction.TRANSLUCENT)
+            .withCull(false)
+            .build();
+
     public static void onRegisterRenderPipelines(RegisterRenderPipelinesEvent event) {
         event.registerPipeline(RECTANGLE);
         event.registerPipeline(TTF_FONT);
         event.registerPipeline(ROUND_RECT);
+        event.registerPipeline(TEXTURE);
     }
 
 }
