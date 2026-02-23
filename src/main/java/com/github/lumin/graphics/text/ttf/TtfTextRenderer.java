@@ -2,6 +2,7 @@ package com.github.lumin.graphics.text.ttf;
 
 import com.github.lumin.graphics.LuminRenderPipelines;
 import com.github.lumin.graphics.LuminRenderSystem;
+import com.github.lumin.graphics.buffer.BufferUtils;
 import com.github.lumin.graphics.buffer.LuminBuffer;
 import com.github.lumin.graphics.text.GlyphDescriptor;
 import com.github.lumin.graphics.text.ITextRenderer;
@@ -71,7 +72,6 @@ public class TtfTextRenderer implements ITextRenderer {
                     break;
                 }
             }
-
             if (skipCurrent) continue;
 
             GlyphDescriptor glyph = fontLoader.getGlyph(ch);
@@ -92,23 +92,14 @@ public class TtfTextRenderer implements ITextRenderer {
             long baseAddr = MemoryUtil.memAddress(buffer.getMappedBuffer());
             long p = baseAddr + currentOffset;
 
-            writeToAddr(p, x1, y1, glyph.uv().u0(), glyph.uv().v0(), argb);
-            writeToAddr(p + STRIDE, x1, y2, glyph.uv().u0(), glyph.uv().v1(), argb);
-            writeToAddr(p + STRIDE * 2, x2, y2, glyph.uv().u1(), glyph.uv().v1(), argb);
-            writeToAddr(p + STRIDE * 3, x2, y1, glyph.uv().u1(), glyph.uv().v0(), argb);
+            BufferUtils.writeUvRectToAddr(p, x1, y1, glyph.uv().u0(), glyph.uv().v0(), argb);
+            BufferUtils.writeUvRectToAddr(p + STRIDE, x1, y2, glyph.uv().u0(), glyph.uv().v1(), argb);
+            BufferUtils.writeUvRectToAddr(p + STRIDE * 2, x2, y2, glyph.uv().u1(), glyph.uv().v1(), argb);
+            BufferUtils.writeUvRectToAddr(p + STRIDE * 3, x2, y1, glyph.uv().u1(), glyph.uv().v0(), argb);
 
             atlasOffsets.put(atlas, currentOffset + (STRIDE * 4));
             xOffset += glyph.advance() * finalScale + SPACING * scale;
         }
-    }
-
-    private void writeToAddr(long p, float x, float y, float u, float v, int color) {
-        MemoryUtil.memPutFloat(p, x);
-        MemoryUtil.memPutFloat(p + 4, y);
-        MemoryUtil.memPutFloat(p + 8, 0.0f);
-        MemoryUtil.memPutFloat(p + 12, u);
-        MemoryUtil.memPutFloat(p + 16, v);
-        MemoryUtil.memPutInt(p + 20, color);
     }
 
     @Override

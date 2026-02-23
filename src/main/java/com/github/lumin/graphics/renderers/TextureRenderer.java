@@ -3,6 +3,7 @@ package com.github.lumin.graphics.renderers;
 import com.github.lumin.graphics.LuminRenderPipelines;
 import com.github.lumin.graphics.LuminRenderSystem;
 import com.github.lumin.graphics.LuminTexture;
+import com.github.lumin.graphics.buffer.BufferUtils;
 import com.github.lumin.graphics.buffer.LuminBuffer;
 import com.github.lumin.utils.resources.ResourceLocationUtils;
 import com.mojang.blaze3d.buffers.GpuBuffer;
@@ -69,22 +70,13 @@ public class TextureRenderer implements IRenderer {
         long baseAddr = MemoryUtil.memAddress(batch.buffer.getMappedBuffer());
         long p = baseAddr + batch.currentOffset;
 
-        writeToAddr(p, x, y, u0, v0, argb);
-        writeToAddr(p + STRIDE, x, y2, u0, v1, argb);
-        writeToAddr(p + STRIDE * 2L, x2, y2, u1, v1, argb);
-        writeToAddr(p + STRIDE * 3L, x2, y, u1, v0, argb);
+        BufferUtils.writeUvRectToAddr(p, x, y, u0, v0, argb);
+        BufferUtils.writeUvRectToAddr(p + STRIDE, x, y2, u0, v1, argb);
+        BufferUtils.writeUvRectToAddr(p + STRIDE * 2L, x2, y2, u1, v1, argb);
+        BufferUtils.writeUvRectToAddr(p + STRIDE * 3L, x2, y, u1, v0, argb);
 
         batch.currentOffset += (long) STRIDE * 4L;
         batch.vertexCount += 4;
-    }
-
-    private void writeToAddr(long p, float x, float y, float u, float v, int color) {
-        MemoryUtil.memPutFloat(p, x);
-        MemoryUtil.memPutFloat(p + 4, y);
-        MemoryUtil.memPutFloat(p + 8, 0.0f);
-        MemoryUtil.memPutFloat(p + 12, u);
-        MemoryUtil.memPutFloat(p + 16, v);
-        MemoryUtil.memPutInt(p + 20, color);
     }
 
     @Override
